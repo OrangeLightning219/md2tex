@@ -86,7 +86,7 @@ int main( int argc, char **argv )
     if ( countRead < inputFileSize )
     {
         inputFileSize = countRead;
-        realloc( inputFileText, countRead + 1 );
+        inputFileText = ( char * ) realloc( inputFileText, countRead + 1 );
     }
 
     inputFileText[ countRead ] = '\0';
@@ -259,5 +259,6 @@ int main( int argc, char **argv )
         previousIndentationLevel = currentIndentationLevel;
     }
 
+    printf( "File %s generated successfully!\n", outputFileName );
     return 0;
 }
