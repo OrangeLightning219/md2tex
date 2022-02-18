@@ -143,41 +143,44 @@ int main( int argc, char **argv )
                         listOpened = false;
                         openedLists = 0;
                     }
-                    fprintf( outputFile, "%c", currentChar );
+                    else
+                    {
+                        fprintf( outputFile, "%c", currentChar );
+                    }
                 }
                 break;
 
                 case '#':
                 {
-                    if ( lineBuffer[ lineCursor + 1 ] == '#' && lineBuffer[ lineCursor + 2 ] == '#' && lineBuffer[ lineCursor + 3 ] == ' ' )
+                    skipLine = true;
+                    if ( lineCursor == 0 )
                     {
-                        // subsubsection
                         lineBuffer[ lineLength - 1 ] = '\0';
-                        fprintf( outputFile, "\\subsubsection{" );
-                        fprintf( outputFile, "%s", &lineBuffer[ lineCursor + 4 ] );
-                        fprintf( outputFile, "}\n" );
-                        skipLine = true;
-                    }
-                    else if ( lineBuffer[ lineCursor + 1 ] == '#' && lineBuffer[ lineCursor + 2 ] == ' ' )
-                    {
-                        // subsection
-                        lineBuffer[ lineLength - 1 ] = '\0';
-                        fprintf( outputFile, "\\subsection{" );
-                        fprintf( outputFile, "%s", &lineBuffer[ lineCursor + 3 ] );
-                        fprintf( outputFile, "}\n" );
-                        skipLine = true;
-                    }
-                    else if ( lineBuffer[ lineCursor + 1 ] == ' ' )
-                    {
-                        // section
-                        lineBuffer[ lineLength - 1 ] = '\0';
-                        fprintf( outputFile, "\\section{" );
-                        fprintf( outputFile, "%s", &lineBuffer[ lineCursor + 2 ] );
-                        fprintf( outputFile, "}\n" );
-                        skipLine = true;
+                        if ( lineBuffer[ lineCursor + 1 ] == '#' && lineBuffer[ lineCursor + 2 ] == '#' &&
+                             ( lineBuffer[ lineCursor + 3 ] == ' ' || ( lineBuffer[ lineCursor + 3 ] == '*' &&
+                                                                        lineBuffer[ lineCursor + 4 ] == ' ' ) ) )
+                        {
+                            bool unnumbered = lineBuffer[ lineCursor + 3 ] == '*';
+                            fprintf( outputFile, "\\subsubsection%s{%s}\n", unnumbered ? "*" : "", &lineBuffer[ lineCursor + 4 + unnumbered ] );
+                        }
+                        else if ( lineBuffer[ lineCursor + 1 ] == '#' &&
+                                  ( lineBuffer[ lineCursor + 2 ] == ' ' || ( lineBuffer[ lineCursor + 2 ] == '*' &&
+                                                                             lineBuffer[ lineCursor + 3 ] == ' ' ) ) )
+                        {
+                            bool unnumbered = lineBuffer[ lineCursor + 2 ] == '*';
+                            fprintf( outputFile, "\\subsection%s{%s}\n", unnumbered ? "*" : "", &lineBuffer[ lineCursor + 3 + unnumbered ] );
+                        }
+                        else if ( lineBuffer[ lineCursor + 1 ] == ' ' || ( lineBuffer[ lineCursor + 1 ] == '*' &&
+                                                                           lineBuffer[ lineCursor + 2 ] == ' ' ) )
+                        {
+                            bool unnumbered = lineBuffer[ lineCursor + 1 ] == '*';
+                            fprintf( outputFile, "\\section%s{%s}\n", unnumbered ? "*" : "", &lineBuffer[ lineCursor + 2 + unnumbered ] );
+                        }
                     }
                     else
                     {
+                        skipLine = false;
+                        lineBuffer[ lineLength - 1 ] = '\n';
                         fprintf( outputFile, "%c", currentChar );
                     }
                 }
