@@ -250,6 +250,23 @@ int main( int argc, char **argv )
                 }
                 break;
 
+                case '@':
+                {
+                    fprintf( outputFile, "\\begin{figure}\n\\centering\n\\includegraphics[width=\\textwidth]{" );
+
+                    ++lineCursor;
+                    while ( lineBuffer[ lineCursor ] != ' ' )
+                    {
+                        fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                        ++lineCursor;
+                    }
+                    ++lineCursor;
+                    lineBuffer[ lineLength - 1 ] = '\0';
+                    fprintf( outputFile, "}\n\\caption{%s}\n\\end{figure}\n", &lineBuffer[ lineCursor ] );
+                    skipLine = true;
+                }
+                break;
+
                 default:
                 {
                     fprintf( outputFile, "%c", currentChar );
