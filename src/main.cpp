@@ -252,18 +252,36 @@ int main( int argc, char **argv )
 
                 case '@':
                 {
-                    fprintf( outputFile, "\\begin{figure}\n\\centering\n\\includegraphics[width=\\textwidth]{" );
-
-                    ++lineCursor;
-                    while ( lineBuffer[ lineCursor ] != ' ' )
+                    if ( lineCursor == 0 )
                     {
-                        fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                        fprintf( outputFile, "\\begin{figure}\n\\centering\n\\includegraphics[width=\\textwidth]{" );
+
+                        char nameBuffer[ 128 ] = { 0 };
                         ++lineCursor;
+                        int start = lineCursor;
+                        while ( lineBuffer[ lineCursor ] != ' ' )
+                        {
+                            fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                            nameBuffer[ lineCursor - start ] = lineBuffer[ lineCursor ];
+                            ++lineCursor;
+                        }
+                        ++lineCursor;
+                        lineBuffer[ lineLength - 1 ] = '\0';
+                        fprintf( outputFile, "}\n\\caption{%s}\n\\label{%s}\n\\end{figure}\n",
+                                 &lineBuffer[ lineCursor ], nameBuffer );
+                        skipLine = true;
                     }
-                    ++lineCursor;
-                    lineBuffer[ lineLength - 1 ] = '\0';
-                    fprintf( outputFile, "}\n\\caption{%s}\n\\end{figure}\n", &lineBuffer[ lineCursor ] );
-                    skipLine = true;
+                    else
+                    {
+                        fprintf( outputFile, "\\ref{" );
+                        ++lineCursor;
+                        while ( lineBuffer[ lineCursor ] >= 'a' && lineBuffer[ lineCursor <= 'z' ] )
+                        {
+                            fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                            ++lineCursor;
+                        }
+                        fprintf( outputFile, "}%c", lineBuffer[ lineCursor ] );
+                    }
                 }
                 break;
 
