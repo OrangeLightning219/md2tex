@@ -238,15 +238,22 @@ int main( int argc, char **argv )
 
                 case '_':
                 {
-                    fprintf( outputFile, "\\emph{" );
-                    ++lineCursor;
-                    while ( lineBuffer[ lineCursor ] != '_' )
+                    if ( lineCursor == 0 || lineBuffer[ lineCursor - 1 ] == ' ' )
                     {
-                        fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                        fprintf( outputFile, "\\emph{" );
+                        ++lineCursor;
+                        while ( lineBuffer[ lineCursor ] != '_' )
+                        {
+                            fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                            ++lineCursor;
+                        }
+                        fprintf( outputFile, "}" );
                         ++lineCursor;
                     }
-                    fprintf( outputFile, "}" );
-                    ++lineCursor;
+                    else
+                    {
+                        fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
+                    }
                 }
                 break;
 
