@@ -138,7 +138,7 @@ int main( int argc, char **argv )
                         for ( int i = 0; i < openedLists + 1; ++i )
                         {
                             IndentFile( outputFile, openedLists - i );
-                            fprintf( outputFile, "\\end{itemize}\n" );
+                            fprintf( outputFile, "\\end{itemize}\n\n" );
                         }
                         listOpened = false;
                         openedLists = 0;
@@ -261,7 +261,7 @@ int main( int argc, char **argv )
                 {
                     if ( lineCursor == 0 )
                     {
-                        fprintf( outputFile, "\\begin{figure}\n\\centering\n\\includegraphics[width=\\textwidth]{" );
+                        fprintf( outputFile, "\\begin{figure}[h]\n\\centering\n\\includegraphics[width=\\textwidth]{" );
 
                         char nameBuffer[ 128 ] = { 0 };
                         ++lineCursor;
@@ -282,7 +282,8 @@ int main( int argc, char **argv )
                     {
                         fprintf( outputFile, "\\ref{" );
                         ++lineCursor;
-                        while ( lineBuffer[ lineCursor ] >= 'a' && lineBuffer[ lineCursor <= 'z' ] )
+                        while ( lineBuffer[ lineCursor ] == '_' ||
+                                ( lineBuffer[ lineCursor ] >= 'a' && lineBuffer[ lineCursor <= 'z' ] ) )
                         {
                             fprintf( outputFile, "%c", lineBuffer[ lineCursor ] );
                             ++lineCursor;
