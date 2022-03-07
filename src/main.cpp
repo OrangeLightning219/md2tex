@@ -248,7 +248,6 @@ int main( int argc, char **argv )
                             ++lineCursor;
                         }
                         fprintf( outputFile, "}" );
-                        ++lineCursor;
                     }
                     else
                     {
