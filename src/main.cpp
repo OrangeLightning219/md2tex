@@ -189,7 +189,7 @@ int main( int argc, char **argv )
 
                 case '*':
                 {
-                    if ( currentIndentationLevel == lineCursor / 4 ) // first character in line
+                    if ( currentIndentationLevel == lineCursor / 4 && lineBuffer[ lineCursor + 1 ] != '*' ) // first character in line
                     {
                         isItemize = true;
                         if ( lineBuffer[ lineCursor + 1 ] == '&' )
