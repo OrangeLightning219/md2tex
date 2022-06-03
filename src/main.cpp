@@ -112,6 +112,7 @@ int main( int argc, char **argv )
     int currentIndentationLevel = 0;
     int previousIndentationLevel = -1;
     bool listOpened = false;
+    bool isItemize = true;
     int openedLists = 0;
     while ( inputFileCursor < inputFileSize )
     {
@@ -138,7 +139,7 @@ int main( int argc, char **argv )
                         for ( int i = 0; i < openedLists + 1; ++i )
                         {
                             IndentFile( outputFile, openedLists - i );
-                            fprintf( outputFile, "\\end{itemize}\n\n" );
+                            fprintf( outputFile, isItemize ? "\\end{itemize}\n\n" : "\\end{enumerate}\n\n" );
                         }
                         listOpened = false;
                         openedLists = 0;
@@ -190,10 +191,17 @@ int main( int argc, char **argv )
                 {
                     if ( currentIndentationLevel == lineCursor / 4 ) // first character in line
                     {
+                        isItemize = true;
+                        if ( lineBuffer[ lineCursor + 1 ] == '&' )
+                        {
+                            isItemize = false;
+                            ++lineCursor;
+                        }
+
                         if ( !listOpened )
                         {
                             IndentFile( outputFile, currentIndentationLevel );
-                            fprintf( outputFile, "\\begin{itemize}\n" );
+                            fprintf( outputFile, isItemize ? "\\begin{itemize}\n" : "\\begin{enumerate}\n" );
                             listOpened = true;
                             fprintf( outputFile, "\\item%s", &lineBuffer[ lineCursor + 1 ] );
                             skipLine = true;
@@ -203,13 +211,13 @@ int main( int argc, char **argv )
                             if ( currentIndentationLevel > previousIndentationLevel )
                             {
                                 IndentFile( outputFile, currentIndentationLevel );
-                                fprintf( outputFile, "\\begin{itemize}\n" );
+                                fprintf( outputFile, isItemize ? "\\begin{itemize}\n" : "\\begin{enumerate}\n" );
                                 ++openedLists;
                             }
                             else if ( currentIndentationLevel < previousIndentationLevel )
                             {
                                 IndentFile( outputFile, previousIndentationLevel );
-                                fprintf( outputFile, "\\end{itemize}\n" );
+                                fprintf( outputFile, isItemize ? "\\end{itemize}\n" : "\\end{enumerate}\n" );
                                 --openedLists;
                             }
                             IndentFile( outputFile, currentIndentationLevel );
